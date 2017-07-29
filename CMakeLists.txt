@@ -7,4 +7,5 @@ project(tmln)
 add_executable(
   TextMiningCompiler
   src/main.cc
+  src/patricia_trie.cc
 )
