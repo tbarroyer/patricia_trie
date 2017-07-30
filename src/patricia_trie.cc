@@ -18,10 +18,30 @@ namespace textMining
 
 
   PatriciaTrie::PatriciaTrie()
-  {}
+  {
+    this->data_.open("tmp");
+
+    if (!this->data_.is_open())
+    {
+      std::cerr << "Unable to open file data" << std::endl;
+      std::abort();
+    }
+
+    this->beg_ = this->data_.tellg();
+  }
 
   PatriciaTrie::PatriciaTrie(std::string path)
   {
+    this->data_.open("tmp");
+
+    if (!this->data_.is_open())
+    {
+      std::cerr << "Unable to open file data" << std::endl;
+      std::abort();
+    }
+
+    this->beg_ = this->data_.tellg();
+
     std::ifstream file(path);
     if (!file.is_open())
     {
@@ -42,6 +62,32 @@ namespace textMining
     file.close();
     std::cout << "Inserted" << std::endl;
   }
+  
+  std::string PatriciaTrie::get_data(int pos, size_t len)
+  {
+    if (pos < 0)
+    {
+      std::cerr << "Wrong pos getting data" << std::endl;
+      std::abort();
+    }
+
+    if (len > BUFF_SIZE)
+    {
+      std::cerr << "Wrong len getting data" << std::endl;
+      std::abort();
+    }
+
+    if (!(this->pos_ >= 0 && pos > this->pos_ && pos < this->pos_ + BUFF_SIZE))
+    {
+      data_.flush();
+      std::streampos old_pos = data_.tellg();
+      data_.seekg(this->beg_);
+      data_.read(this->buff_, BUFF_SIZE);
+      data_.seekg(old_pos);
+      this->pos_ = pos;
+    }
+    return std::string(this->buff_ + (pos - this->pos_), len);
+  }
 
   void PatriciaTrie::insert(std::string word, int freq)
   {
@@ -57,26 +103,30 @@ namespace textMining
       if (t->len_ > 0)
       {
         size_t j = 0;
-        while (j < t->len_ && this->str_[t->start_ + j] == word[i])
+        while (j < t->len_ && this->get_data(t->start_ + j, 1)[0] == word[i])
         {
           j++;
           i++;
         }
         if (j < t->len_ - 1)
         {
+          char cap = this->get_data(j, 1)[0];
+
           t->len_ = j;
-          t->childs_[str_[j]] = std::make_shared<Node>();
-          t->childs_[str_[j]]->len_ = t->len_ - j - 1;
-          t->childs_[str_[j]]->start_ = t->start_ + j + 1;
-          t->childs_[str_[j]]->freq_ = t->freq_;
+          t->childs_[cap] = std::make_shared<Node>();
+          t->childs_[cap]->len_ = t->len_ - j - 1;
+          t->childs_[cap]->start_ = t->start_ + j + 1;
+          t->childs_[cap]->freq_ = t->freq_;
           t->freq_ = -1;
 
           t->childs_[word[i]] = std::make_shared<Node>();
           if (i < word.length() - 1)
           {
-            t->childs_[word[i]]->start_ = this->str_.length();
+            t->childs_[word[i]]->start_ = this->data_size_;
             t->childs_[word[i]]->len_ = word.length() - i - 1;
-            this->str_ += word.substr(i + 1, t->childs_[word[i]]->len_);
+            //this->str_ += word.substr(i + 1, t->childs_[word[i]]->len_);
+            this->data_ << word.substr(i + 1, t->childs_[word[i]]->len_);
+            this->data_size_ += t->childs_[word[i]]->len_;
           }
           t->childs_[word[i]]->freq_ = freq;
           this->size_++;
@@ -90,9 +140,11 @@ namespace textMining
       t = t->childs_[word[i]];
       if (i < word.length() - 1)
       {
-        t->start_ = this->str_.length();
+        t->start_ = this->data_size_;
         t->len_ = word.length() - i - 1;
-        this->str_ += word.substr(i + 1, t->len_);
+        //this->str_ += word.substr(i + 1, t->len_);
+        this->data_ << word.substr(i + 1, t->len_);
+        this->data_size_ += t->len_;
       }
       t->freq_ = freq;
       this->size_++;
