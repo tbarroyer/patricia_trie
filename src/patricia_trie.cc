@@ -11,6 +11,11 @@ namespace textMining
     start_(start), len_(len)
   {}
 
+  Node::Node() :
+    start_(0), len_(0)
+  {}
+
+
   PatriciaTrie::PatriciaTrie()
   {}
 
@@ -36,6 +41,7 @@ namespace textMining
     (void) freq;
 
     file.close();
+    std::cout << "Inserted" << std::endl;
   }
 
   void PatriciaTrie::insert(std::string word)
@@ -54,7 +60,7 @@ namespace textMining
     {
       while (i < word.length())
       {
-        t->childs_[word[i]] = new Node(0, 0);
+        t->childs_[word[i]] = new Node();
         t = t->childs_[word[i]];
         i++;
       }
@@ -86,11 +92,14 @@ namespace textMining
       node->len_ = att.length();
       this->str_ += att;
 
-      Node* attach = node;
-      for (size_t i = 0; i < att.length() + 1; ++i)
+      Node* attach = node->childs_.begin()->second;
+      for (size_t i = 0; i < att.length(); ++i)
       {
         if (attach->childs_.size() > 0)
+        {
+          //delete attach;
           attach = attach->childs_.begin()->second;
+        }
         else
           attach = NULL;
       }
@@ -115,9 +124,17 @@ namespace textMining
       node->len_ = att.length();
       this->str_ += att;
 
-      Node* attach = node;
-      for (size_t i = 0; i < att.length() + 1; ++i)
-        attach = attach->childs_.begin()->second;
+      Node* attach = node->childs_.begin()->second;
+      for (size_t i = 0; i < att.length(); ++i)
+      {
+        if (attach->childs_.size() > 0)
+        {
+          //delete attach;
+          attach = attach->childs_.begin()->second;
+        }
+        else
+          attach = NULL;
+      }
 
       if (attach != NULL)
         node->childs_[red[0]] = attach;
@@ -137,5 +154,7 @@ namespace textMining
     reduced_ = true;
 
     this->reduce(this->tree_);
+
+    std::cout << "Reduced" << std::endl;
   }
 }

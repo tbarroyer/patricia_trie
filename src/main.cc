@@ -1,6 +1,10 @@
 # include <iostream>
 # include <cstdlib>
 
+#include <fstream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 # include "patricia_trie.hh"
 
 int main(int argc, char* argv[])
@@ -13,6 +17,20 @@ int main(int argc, char* argv[])
 
   textMining::PatriciaTrie trie(argv[1]);
   trie.reduce();
+
+  std::ofstream ofs("bina");
+  {
+    boost::archive::text_oarchive oa(ofs);
+    oa << trie;
+  }
+
+  textMining::PatriciaTrie trie2;
+
+  {
+    std::ifstream ifs("bina");
+    boost::archive::text_iarchive ia(ifs);
+    ia >> trie2;
+  }
 
   return 0;
 }
