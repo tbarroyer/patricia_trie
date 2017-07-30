@@ -54,14 +54,45 @@ namespace textMining
     {
       t = t->childs_[word[i]];
       i++;
+      if (t->len_ > 0)
+      {
+        size_t j = 0;
+        while (j < t->len_ && this->str_[t->start_ + j] == word[i])
+        {
+          j++;
+          i++;
+        }
+        if (j < t->len_ - 1)
+        {
+          t->len_ = j;
+          t->childs_[str_[j]] = std::make_shared<Node>();
+          t->childs_[str_[j]]->len_ = t->len_ - j - 1;
+          t->childs_[str_[j]]->start_ = t->start_ + j + 1;
+          t->childs_[str_[j]]->freq_ = t->freq_;
+          t->freq_ = -1;
+
+          t->childs_[word[i]] = std::make_shared<Node>();
+          if (i < word.length() - 1)
+          {
+            t->childs_[word[i]]->start_ = this->str_.length();
+            t->childs_[word[i]]->len_ = word.length() - i - 1;
+            this->str_ += word.substr(i + 1, t->childs_[word[i]]->len_);
+          }
+          t->childs_[word[i]]->freq_ = freq;
+          this->size_++;
+          return;
+        }
+      }
     }
     if (i < word.length())
     {
-      while (i < word.length())
+      t->childs_[word[i]] = std::make_shared<Node>();
+      t = t->childs_[word[i]];
+      if (i < word.length() - 1)
       {
-        t->childs_[word[i]] = std::make_shared<Node>();
-        t = t->childs_[word[i]];
-        i++;
+        t->start_ = this->str_.length();
+        t->len_ = word.length() - i - 1;
+        this->str_ += word.substr(i + 1, t->len_);
       }
       t->freq_ = freq;
       this->size_++;
