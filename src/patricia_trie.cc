@@ -2,6 +2,7 @@
 # include <sstream>
 # include <cstdlib>
 # include <fstream>
+# include <algorithm>
 # include <boost/archive/binary_oarchive.hpp>
 
 # include "patricia_trie.hh"
@@ -51,7 +52,7 @@ namespace textMining
     std::ifstream file(path);
     if (!file.is_open())
     {
-      std::cerr << "Unable to open file" << std::endl;
+      std::cerr << "File not found: " << path << std::endl;
       std::abort();
     }
 
@@ -126,6 +127,23 @@ namespace textMining
       auto add = this->approx(word, &(it->second), dist, acc + it->first);
       out.insert(out.end(), add.begin(), add.end());
     }
+
+    struct {
+      bool operator()(std::tuple<std::string, int, int> a, std::tuple<std::string, int, int> b) const
+      {
+        if (std::get<1>(a) == std::get<1>(b)) {
+          if (std::get<2>(a) == std::get<2>(b))
+            return std::lexicographical_compare(std::get<0>(a).begin(), \
+                std::get<0>(a).end(), std::get<0>(b).begin(), \
+                std::get<0>(b).end());
+          return std::get<2>(a) > std::get<2>(b);
+        }
+        return std::get<1>(a) < std::get<1>(b);
+      }
+    } ResSort;
+
+    std::sort(out.begin(), out.end(), ResSort);
+
     return out;
   }
 
