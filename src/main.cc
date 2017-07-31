@@ -2,8 +2,8 @@
 # include <cstdlib>
 
 #include <fstream>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 # include "patricia_trie.hh"
 
@@ -20,11 +20,11 @@ int main(int argc, char* argv[])
   trie.save(argv[2]);
   while (1);
 
-  /*textMining::PatriciaTrie trie2;
+  textMining::PatriciaTrie trie2;
   {
     std::ifstream ifs("bina");
-    boost::archive::text_iarchive ia(ifs);
+    boost::archive::binary_iarchive ia(ifs);
     ia >> trie2;
-  }*/
+  }
   return 0;
 }

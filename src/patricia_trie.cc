@@ -262,5 +262,6 @@ namespace textMining
       boost::archive::binary_oarchive oa(ofs);
       oa << *this;
     }
+    ofs.close();
   }
 }
