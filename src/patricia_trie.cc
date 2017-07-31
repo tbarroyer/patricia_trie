@@ -5,6 +5,7 @@
 # include <boost/archive/binary_oarchive.hpp>
 
 # include "patricia_trie.hh"
+# include "tools.hh"
 
 namespace textMining
 {
@@ -94,8 +95,41 @@ namespace textMining
     }
     return std::string(this->buff_ + (pos - this->pos_), len);
   }
+  
+  std::vector<std::tuple<std::string, int, int>> PatriciaTrie::approx(std::string word, Node* n, int dist, std::string acc)
+  {
+    acc += this->get_data(n->start_, n->len_);
 
-  bool PatriciaTrie::search(std::string word)
+    std::vector<std::tuple<std::string, int, int>> out;
+    if (n->freq_ != -1)
+    {
+      int d = Tools::distance(word, acc);
+      if (d <= dist)
+        out.push_back(std::make_tuple(acc, d, n->freq_));
+    }
+    
+    for (auto it = n->childs_.begin(); it != n->childs_.end(); ++it)
+    {
+      auto add = this->approx(word, &(it->second), dist, acc + it->first);
+      out.insert(out.end(), add.begin(), add.end());
+    }
+    return out;
+  }
+
+  std::vector<std::tuple<std::string, int, int>> PatriciaTrie::approx(std::string word, int dist)
+  {
+    std::vector<std::tuple<std::string, int, int>> out;
+    auto t = &(this->tree_);
+    std::string acc = "";
+    for (auto it = t->childs_.begin(); it != t->childs_.end(); ++it)
+    {
+      auto add = this->approx(word, &(it->second), dist, acc + it->first);
+      out.insert(out.end(), add.begin(), add.end());
+    }
+    return out;
+  }
+
+  int PatriciaTrie::search(std::string word)
   {
     auto t = &(this->tree_);
     size_t i = 0;
@@ -112,12 +146,12 @@ namespace textMining
           i++;
         }
         if (j < t->len_)
-          return false;
+          return -1;
       }
     }
     if (t->freq_ == -1 || i < word.length())
-      return false;
-    return true;
+      return -1;
+    return t->freq_;
   }
 
   void PatriciaTrie::insert(std::string word, int freq)
@@ -153,7 +187,6 @@ namespace textMining
           {
             t->childs_[word[i]].start_ = this->data_size_;
             t->childs_[word[i]].len_ = word.length() - i - 1;
-            //this->str_ += word.substr(i + 1, t->childs_[word[i]]->len_);
             this->data_ << word.substr(i + 1, t->childs_[word[i]].len_);
             this->data_size_ += t->childs_[word[i]].len_;
           }
@@ -170,7 +203,6 @@ namespace textMining
       {
         t->childs_[word[i]].start_ = this->data_size_;
         t->childs_[word[i]].len_ = word.length() - i - 1;
-        //this->str_ += word.substr(i + 1, t->len_);
         this->data_ << word.substr(i + 1, t->childs_[word[i]].len_);
         this->data_size_ += t->childs_[word[i]].len_;
       }
@@ -184,98 +216,6 @@ namespace textMining
     }
   }
   
-/*  std::string PatriciaTrie::reducedNode(std::shared_ptr<Node> node, char b)
-  {
-    if (node->childs_.size() == 1)
-      return b + this->reducedNode(node->childs_.begin()->second, node->childs_.begin()->first);
-    return std::string(1, b);
-  }
-  
-  std::string PatriciaTrie::reducedNode(std::shared_ptr<Node> node)
-  {
-    if (node->childs_.size() == 1)
-      return this->reducedNode(node->childs_.begin()->second, node->childs_.begin()->first);
-    return "";
-  }
-
-  void PatriciaTrie::reduce(std::shared_ptr<Node> node, char b)
-  {
-    std::string red = this->reducedNode(node, b);
-
-    if (red.length() > 1)
-    {
-      std::string att = red.substr(1, red.length() - 1);
-      node->start_ = this->str_.length();
-      node->len_ = att.length();
-      this->str_ += att;
-
-      auto attach = node->childs_.begin()->second;
-      for (size_t i = 0; i < att.length(); ++i)
-      {
-        if (attach->childs_.size() > 0)
-        {
-          //delete attach;
-          attach = attach->childs_.begin()->second;
-        }
-        else
-          attach = NULL;
-      }
-      if (attach != NULL)
-        node->childs_[red[0]] = attach;
-      else
-        node->childs_.clear();
-    }
-
-    for (auto it=node->childs_.begin(); it != node->childs_.end(); ++it)
-      this->reduce(it->second, it->first);
-  }
-
-  void PatriciaTrie::reduce(std::shared_ptr<Node> node)
-  {
-    std::string red = this->reducedNode(node);
-
-    if (red.length() > 1)
-    {
-      std::string att = red.substr(1, red.length() - 1);
-      node->start_ = this->str_.length();
-      node->len_ = att.length();
-      this->str_ += att;
-
-      auto attach = node->childs_.begin()->second;
-      for (size_t i = 0; i < att.length(); ++i)
-      {
-        if (attach->childs_.size() > 0)
-        {
-          //delete attach;
-          attach = attach->childs_.begin()->second;
-        }
-        else
-          attach = NULL;
-      }
-
-      if (attach != NULL)
-        node->childs_[red[0]] = attach;
-      else
-        node->childs_.clear();
-    }
-
-    for (auto it = node->childs_.begin(); it != node->childs_.end(); ++it)
-      this->reduce(it->second, it->first);
-  }
-
-  void PatriciaTrie::reduce()
-  {
-    if (this->reduced_)
-      return;
-
-    reduced_ = true;
-
-    this->reduce(this->tree_);
-
-    std::cout << "Reduced" << std::endl;
-    //std::cout << this->str_ << std::endl;
-  }*/
-
   void PatriciaTrie::save(std::string path)
   {
     std::ofstream ofs(path, std::fstream::binary | std::fstream::out);

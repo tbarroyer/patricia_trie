@@ -7,7 +7,7 @@ int main(int argc, char* argv[])
 {
   if (argc != 3)
   {
-    std::cerr << "Usage: " << argv[0] << " /path/to/word/freq.txt /path/to/output/dict.bin" << std::endl;
+    std::cout << "Usage: " << argv[0] << " /path/to/word/freq.txt /path/to/output/dict.bin" << std::endl;
     std::abort();
   }
 
