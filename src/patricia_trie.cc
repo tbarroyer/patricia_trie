@@ -39,6 +39,7 @@ namespace textMining
 
   PatriciaTrie::PatriciaTrie(std::string path)
   {
+    std::cout << "Size structure: 4" << std::endl;
     this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::app);
 
     if (!this->data_.is_open())
@@ -53,7 +54,7 @@ namespace textMining
     if (!file.is_open())
     {
       std::cerr << "File not found: " << path << std::endl;
-      std::abort();
+      std::exit(255);
     }
 
     std::string line;
