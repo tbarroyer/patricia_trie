@@ -6,6 +6,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 # include "patricia_trie.hh"
+# include "tools.hh"
 
 int main(int argc, char* argv[])
 {
@@ -18,7 +19,7 @@ int main(int argc, char* argv[])
   textMining::PatriciaTrie trie(argv[1]);
   //trie.reduce();
   trie.save(argv[2]);
-  while (1);
+  //while (1);
 
   textMining::PatriciaTrie trie2;
   {
