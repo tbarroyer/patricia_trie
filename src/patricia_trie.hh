@@ -6,6 +6,8 @@
 # include <boost/serialization/map.hpp>
 # include <memory>
 # include <fstream>
+# include <tuple>
+# include <vector>
 
 # define BUFF_SIZE 10
 
@@ -44,17 +46,13 @@ namespace textMining
     PatriciaTrie(std::string);
     ~PatriciaTrie();
     void insert(std::string, int freq);
-    //void reduce();
     void save(std::string path);
-    bool search(std::string word);
+    int search(std::string word);
+    std::vector<std::tuple<std::string, int, int>> approx(std::string word, int dist);
+    std::vector<std::tuple<std::string, int, int>> approx(std::string word, Node* n, int dist, std::string acc);
 
   private:
     friend class boost::serialization::access;
-
-    //std::string reducedNode(std::shared_ptr<Node> node, char b);
-    //std::string reducedNode(std::shared_ptr<Node> node);
-    //void reduce(std::shared_ptr<Node> node, char b);
-    //void reduce(std::shared_ptr<Node> node);
 
     std::string get_data(int pos, size_t len);
 
@@ -62,7 +60,6 @@ namespace textMining
     void serialize(Archive& ar, const unsigned int version)
     {
       (void) version;
-      //ar & str_;
       ar & tree_;
       ar & size_;
       ar & data_size_;
@@ -70,7 +67,6 @@ namespace textMining
 
   private:
     std::fstream data_;
-    //std::string str_ = "";
     char buff_[BUFF_SIZE];
     int pos_ = -1;
     std::streampos beg_;

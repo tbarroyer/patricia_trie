@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
 {
   if (argc != 2)
   {
-    std::cerr << "Usage: " << argv[0] << " /path/to/output/dict.bin" << std::endl;
+    std::cout << "Usage: " << argv[0] << " /path/to/compiled/dict.bin" << std::endl;
     std::abort();
   }
 
@@ -22,9 +22,19 @@ int main(int argc, char* argv[])
 
   while (1)
   {
-    std::string test;
-    std::cin >> test;
-    std::cout << trie.search(test) << std::endl;
+    std::string app;
+    int dist;
+    std::string word;
+    std::cin >> app >> dist >> word;
+
+    if (app == "approx")
+    {
+      if (dist == 0)
+      {
+        std::cout << "[{\"word\":\"" << word <<
+          "\",\"freq\":" << trie.search(word) << ",\"distance\":0}]" << std::endl;
+      }
+    }
   }
   return 0;
 }
