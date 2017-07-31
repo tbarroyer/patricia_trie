@@ -6,7 +6,7 @@ set(CMAKE_FIND_LIBRARY_PREFIXES lib)
 set(CMAKE_FIND_LIBRARY_SUFFIXES .so;.a)
 set(DOCUMENTATION_DIR doc)
 
-add_definitions(-O3 -std=c++14 -pedantic -Wall -Wextra)
+add_definitions(-O3 -march=native -std=c++14 -pedantic -Wall -Wextra)
 
 #FIND_PACKAGE(Boost 1.58 COMPONENTS serialization REQUIRED)
 #INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})

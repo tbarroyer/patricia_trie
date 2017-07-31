@@ -11,14 +11,12 @@ int main(int argc, char* argv[])
     std::abort();
   }
 
+  {
+    std::fstream f("tmp", std::fstream::in | std::fstream::out | std::fstream::trunc);
+    f.close();
+  }
+
   textMining::PatriciaTrie trie(argv[1]);
   trie.save(argv[2]);
-  /*std::cout << "saved" << std::endl;
-  while (1)
-  {
-    std::string test;
-    std::cin >> test;
-    std::cout << trie.search(test) << std::endl;
-  }*/
   return 0;
 }
