@@ -8,8 +8,8 @@ set(DOCUMENTATION_DIR doc)
 
 add_definitions(-O3 -march=native -std=c++14 -pedantic -Wall -Wextra)
 
-#FIND_PACKAGE(Boost 1.58 COMPONENTS serialization REQUIRED)
-#INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+FIND_PACKAGE(Boost 1.58 COMPONENTS serialization REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
 
 project(tmln)
