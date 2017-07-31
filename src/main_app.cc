@@ -31,8 +31,29 @@ int main(int argc, char* argv[])
     {
       if (dist == 0)
       {
-        std::cout << "[{\"word\":\"" << word <<
-          "\",\"freq\":" << trie.search(word) << ",\"distance\":0}]" << std::endl;
+        int s = trie.search(word);
+        if (s != -1)
+          std::cout << "[{\"word\":\"" << word <<
+            "\",\"freq\":" << s << ",\"distance\":0}]" << std::endl;
+      }
+      else
+      {
+        auto out = trie.approx(word, dist);
+        std::string aff = "{";
+        for (auto it = out.begin(); it != out.end(); ++it)
+        {
+          aff += "[\"word\":\"";
+          aff += std::get<0>(*it);
+          aff += "\",\"freq\":";
+          aff += std::to_string(std::get<2>(*it));
+          aff += ",\"distance\":";
+          aff += std::to_string(std::get<1>(*it));
+          aff += "]";
+          if (std::next(it) != out.end())
+            aff += ",";
+        }
+        aff += "}";
+        std::cout << aff << std::endl;
       }
     }
   }

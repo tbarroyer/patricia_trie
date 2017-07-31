@@ -25,7 +25,7 @@ namespace textMining
 
   PatriciaTrie::PatriciaTrie()
   {
-    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::trunc);
+    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::app);
 
     if (!this->data_.is_open())
     {
@@ -38,7 +38,7 @@ namespace textMining
 
   PatriciaTrie::PatriciaTrie(std::string path)
   {
-    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::trunc);
+    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::app);
 
     if (!this->data_.is_open())
     {

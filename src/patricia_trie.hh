@@ -9,7 +9,7 @@
 # include <tuple>
 # include <vector>
 
-# define BUFF_SIZE 10
+# define BUFF_SIZE 1000
 
 namespace textMining
 {
