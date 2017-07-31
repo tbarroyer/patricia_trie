@@ -278,7 +278,7 @@ namespace textMining
 
   void PatriciaTrie::save(std::string path)
   {
-    std::ofstream ofs(path, std::ios::binary);
+    std::ofstream ofs(path, std::fstream::binary | std::fstream::out);
     {
       boost::archive::binary_oarchive oa(ofs);
       oa << *this;

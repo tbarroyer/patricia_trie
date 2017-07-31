@@ -1,12 +1,7 @@
 # include <iostream>
 # include <cstdlib>
 
-#include <fstream>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
-
 # include "patricia_trie.hh"
-# include "tools.hh"
 
 int main(int argc, char* argv[])
 {
@@ -17,15 +12,13 @@ int main(int argc, char* argv[])
   }
 
   textMining::PatriciaTrie trie(argv[1]);
-  std::cout << "inserted" << std::endl;
-  //trie.reduce();
-  //trie.save(argv[2]);
-  std::cout << "saved" << std::endl;
+  trie.save(argv[2]);
+  /*std::cout << "saved" << std::endl;
   while (1)
   {
     std::string test;
     std::cin >> test;
     std::cout << trie.search(test) << std::endl;
-  }
+  }*/
   return 0;
 }

@@ -4,7 +4,6 @@
 # include <map>
 # include <boost/serialization/split_free.hpp>
 # include <boost/serialization/map.hpp>
-# include <boost/serialization/shared_ptr.hpp>
 # include <memory>
 # include <fstream>
 
@@ -34,11 +33,7 @@ namespace textMining
       ar & start_;
       ar & len_;
       ar & freq_;
-      for (auto it = childs_.begin(); it != childs_.end(); ++it)
-      {
-        ar & it->first;
-        ar & it->second;
-      }
+      ar & childs_;
     } 
   };
 
