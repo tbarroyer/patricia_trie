@@ -50,7 +50,7 @@ namespace textMining
     std::ifstream file(path);
     if (!file.is_open())
     {
-      std::cerr << "Unable to open file" << std::endl;
+      std::cerr << "File not found: " << path << std::endl;
       std::abort();
     }
 
