@@ -16,10 +16,15 @@ namespace textMining
     start_(0), len_(0), freq_(-1)
   {}
 
+  PatriciaTrie::~PatriciaTrie()
+  {
+    this->data_.flush();
+    this->data_.close();
+  }
 
   PatriciaTrie::PatriciaTrie()
   {
-    this->data_.open("tmp");
+    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::trunc);
 
     if (!this->data_.is_open())
     {
@@ -32,7 +37,7 @@ namespace textMining
 
   PatriciaTrie::PatriciaTrie(std::string path)
   {
-    this->data_.open("tmp");
+    this->data_ = std::fstream("tmp", std::fstream::in | std::fstream::out | std::fstream::trunc);
 
     if (!this->data_.is_open())
     {
@@ -60,7 +65,7 @@ namespace textMining
     }
 
     file.close();
-    std::cout << "Inserted" << std::endl;
+    std::cout << "Inserted\n";
   }
   
   std::string PatriciaTrie::get_data(int pos, size_t len)
@@ -79,12 +84,14 @@ namespace textMining
 
     if (!(this->pos_ >= 0 && pos > this->pos_ && pos < this->pos_ + BUFF_SIZE))
     {
-      data_.flush();
-      std::streampos old_pos = data_.tellg();
-      data_.seekg(this->beg_);
-      data_.read(this->buff_, BUFF_SIZE);
-      data_.seekg(old_pos);
+      this->data_.flush();
+      std::streampos old_pos = this->data_.tellg();
+      this->data_.seekg(this->beg_);
+      this->data_.seekg(pos, std::ios::cur);
+      this->data_.read(this->buff_, BUFF_SIZE);
+      this->data_.seekg(old_pos);
       this->pos_ = pos;
+      this->data_.clear();
     }
     return std::string(this->buff_ + (pos - this->pos_), len);
   }
@@ -156,7 +163,7 @@ namespace textMining
     }
   }
   
-  std::string PatriciaTrie::reducedNode(std::shared_ptr<Node> node, char b)
+/*  std::string PatriciaTrie::reducedNode(std::shared_ptr<Node> node, char b)
   {
     if (node->childs_.size() == 1)
       return b + this->reducedNode(node->childs_.begin()->second, node->childs_.begin()->first);
@@ -246,7 +253,7 @@ namespace textMining
 
     std::cout << "Reduced" << std::endl;
     //std::cout << this->str_ << std::endl;
-  }
+  }*/
 
   void PatriciaTrie::save(std::string path)
   {

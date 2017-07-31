@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
   textMining::PatriciaTrie trie(argv[1]);
   //trie.reduce();
   trie.save(argv[2]);
+  while (1);
 
   /*textMining::PatriciaTrie trie2;
   {
