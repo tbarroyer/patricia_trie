@@ -8,7 +8,7 @@
 # include <memory>
 # include <fstream>
 
-# define BUFF_SIZE 10000
+# define BUFF_SIZE 10
 
 namespace textMining
 {
@@ -22,7 +22,7 @@ namespace textMining
     size_t start_;
     size_t len_;
     int freq_;
-    std::map<char, std::shared_ptr<Node>> childs_;
+    std::map<char, Node> childs_;
 
   private:
     friend class boost::serialization::access;
@@ -34,7 +34,11 @@ namespace textMining
       ar & start_;
       ar & len_;
       ar & freq_;
-      ar & childs_;
+      for (auto it = childs_.begin(); it != childs_.end(); ++it)
+      {
+        ar & it->first;
+        ar & it->second;
+      }
     } 
   };
 
@@ -47,6 +51,7 @@ namespace textMining
     void insert(std::string, int freq);
     //void reduce();
     void save(std::string path);
+    bool search(std::string word);
 
   private:
     friend class boost::serialization::access;
@@ -64,7 +69,6 @@ namespace textMining
       (void) version;
       //ar & str_;
       ar & tree_;
-      ar & reduced_;
       ar & size_;
       ar & data_size_;
     }
@@ -77,8 +81,7 @@ namespace textMining
     std::streampos beg_;
 
 
-    std::shared_ptr<Node> tree_ = std::make_shared<Node>();
-    bool reduced_ = false;
+    Node tree_ = Node();
     size_t size_ = 0;
     size_t data_size_ = 0;
   };

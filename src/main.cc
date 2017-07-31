@@ -16,9 +16,16 @@ int main(int argc, char* argv[])
   }
 
   textMining::PatriciaTrie trie(argv[1]);
+  std::cout << "inserted" << std::endl;
   //trie.reduce();
-  trie.save(argv[2]);
-  while (1);
+  //trie.save(argv[2]);
+  std::cout << "saved" << std::endl;
+  while (1)
+  {
+    std::string test;
+    std::cin >> test;
+    std::cout << trie.search(test) << std::endl;
+  }
 
   /*textMining::PatriciaTrie trie2;
   {
