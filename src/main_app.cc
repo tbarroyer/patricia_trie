@@ -38,21 +38,35 @@ int main(int argc, char* argv[])
       }
       else
       {
-        auto out = trie.approx(word, dist);
-        std::string aff = "{";
+        auto out = trie.approx(word, 1);
+        for (int i = 2; i <= dist; ++i) {
+          auto aux = trie.approx(word, i);
+          out.insert(out.end(), aux.begin(), aux.end());
+        }
+        std::string aff = "[";
+        int s = trie.search(word);
+        if (s != -1) {
+          aff += "{\"word\":\"";
+          aff += word;
+          aff += "\",\"freq\":";
+          aff += std::to_string(s);
+          aff += ",\"distance\":0}";
+          if (out.size() > 0)
+            aff += ",";
+        }
         for (auto it = out.begin(); it != out.end(); ++it)
         {
-          aff += "[\"word\":\"";
+          aff += "{\"word\":\"";
           aff += std::get<0>(*it);
           aff += "\",\"freq\":";
           aff += std::to_string(std::get<2>(*it));
           aff += ",\"distance\":";
           aff += std::to_string(std::get<1>(*it));
-          aff += "]";
+          aff += "}";
           if (std::next(it) != out.end())
             aff += ",";
         }
-        aff += "}";
+        aff += "]";
         std::cout << aff << std::endl;
       }
     }
