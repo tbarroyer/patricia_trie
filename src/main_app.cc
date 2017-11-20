@@ -20,12 +20,12 @@ int main(int argc, char* argv[])
   }
   ifs.close();
 
-  while (1)
+  std::string app;
+  int dist;
+  std::string word;
+
+  while (!(std::cin >> app >> dist >> word).eof())
   {
-    std::string app;
-    int dist;
-    std::string word;
-    std::cin >> app >> dist >> word;
 
     if (app == "approx")
     {
@@ -35,6 +35,9 @@ int main(int argc, char* argv[])
         if (s != -1)
           std::cout << "[{\"word\":\"" << word <<
             "\",\"freq\":" << s << ",\"distance\":0}]" << std::endl;
+        else
+          std::cout << "[]" << std::endl;
+        continue;
       }
       else
       {
